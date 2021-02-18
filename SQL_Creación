@@ -1,0 +1,272 @@
+/********************************************************************************************************************
+*********************************************************************************************************************
+Grupo 3 - Reto 3
+
+
+Autores: Jonatan Villca, David Jiménez, Marcos Seoane y Unai Zelaia-Zugadi
+Módulo: Gestión de bases de datos
+Profesora: Hostaizka Sainz
+Maristak Ikastetxea Durango
+
+
+*********************************************************************************************************************
+*********************************************************************************************************************/
+DROP DATABASE IF EXISTS Centro;
+CREATE DATABASE IF NOT EXISTS Centro;
+
+USE Centro;
+
+CREATE TABLE IF NOT EXISTS Donaciones(
+	vchidDonacion varchar(8) NOT NULL,
+	vchDescripcion varchar(50) NOT NULL,
+	vchNombre varchar(50),
+	vchEmail varchar(50),
+	
+	CONSTRAINT PK_Donación PRIMARY KEY(vchidDonacion)
+);
+
+CREATE TABLE IF NOT EXISTS FechDonacion(
+	DateFechaDonacion date NOT NULL,
+	fltCantidad float(6) NOT NULL,
+	vchIdDonacion varchar(8) NOT NULL,
+	vchIdorganizacion varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Donacion_Comp PRIMARY KEY(dateFechaDonacion, vchIdDonacion, vchIdorganizacion)
+);
+--
+
+
+CREATE TABLE IF NOT EXISTS Centro_recursos(
+	vchDireccion varchar(50) NOT NULL,
+	vchContacto varchar(9) NOT NULL,
+	vchIdorganizacion varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Organizacion PRIMARY KEY(vchIdorganizacion)
+);
+--
+
+
+CREATE TABLE IF NOT EXISTS ReservasLib(
+	datFechaInicio date NOT NULL,
+	datFechaFin date,
+	vchIdUsuario varchar(8) NOT NULL, 
+	vchIdLibro varchar(13) NOT NULL, 
+	
+	CONSTRAINT PK_Reserva_Comp PRIMARY KEY(datFechaInicio, vchIdUsuario, vchIdLibro)
+);
+--
+
+
+CREATE TABLE IF NOT EXISTS Libros(
+	vchIdLibro varchar(13) NOT NULL,
+	vchTitulo varchar(50) NOT NULL,
+	vchAutor varchar(50) NOT NULL,
+	intEdicion int(2),
+	vchEditorial varchar(20),
+	intEstanteria int(3),
+	intBalda int(3),
+	
+	CONSTRAINT PK_Libro PRIMARY KEY(vchIdLibro)
+);
+	--
+
+
+
+CREATE TABLE IF NOT EXISTS CantLibros(
+	vchIdLibro varchar(13) NOT NULL,
+	vchIdEspacio varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Libro_Comp PRIMARY KEY(vchIdLibro, vchIdEspacio)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Usuarios(
+	vchIdUsuario varchar(8) NOT NULL,
+	vchNombre varchar(20) NOT NULL,
+	vchApellido varchar(20) NOT NULL,
+	vchTelefono varchar(9),
+	vchIdLocalidad varchar(8) NOT NULL, 
+	vchIdorganizacion varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Usuario PRIMARY KEY(vchIdUsuario)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Localidad(
+	vchIdLocalidad varchar(8) NOT NULL,
+	vchLocalidad varchar(20) NOT NULL,
+	
+	CONSTRAINT PK_Localidad PRIMARY KEY(vchIdLocalidad)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS ReservasDisp(
+	datFechaInicio date NOT NULL,
+	datFechaFin date NOT NULL,
+	vchIdUsuario varchar(8) NOT NULL,
+	vchIdDispositivo varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Reserva_Disp PRIMARY KEY(datFechaInicio, vchIdUsuario, vchIdDispositivo)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Espacios(
+	vchIdEspacio varchar(8) NOT NULL,
+	intAforo int(4) NOT NULL,
+	intNumSillas int(3) NOT NULL,
+	intNºMesas int(2) NOT NULL,
+	vchIdorganizacion varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Espacio PRIMARY KEY(vchIdEspacio)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS CantDisp(
+	vchIdDispositivo varchar(8) NOT NULL,
+	vchIdEspacio varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Dispositivo_Comp PRIMARY KEY(vchIdDispositivo, vchIdEspacio)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Dispositivos(
+	vchIdDispositivo varchar(8) NOT NULL,
+	vchIdModelo varchar(8) NOT NULL, 
+	vchIdMarca varchar(8) NOT NULL,
+	vchIdSO varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Dispositivo PRIMARY KEY(vchIdDispositivo)
+);
+
+
+CREATE TABLE IF NOT EXISTS Modelo(
+	vchIdModelo varchar(8) NOT NULL,
+	vchModelo varchar(50) NOT NULL,
+	
+	CONSTRAINT PK_Modelo PRIMARY KEY(vchIdModelo)
+);
+
+CREATE TABLE IF NOT EXISTS Marcas(
+	vchIdMarca varchar(8) NOT NULL,
+	vchMarca varchar(20) NOT NULL,
+	
+	CONSTRAINT PK_Marca PRIMARY KEY(vchIdMarca)
+);
+
+
+CREATE TABLE IF NOT EXISTS Contrasenas_permisos(
+	vchContrasena varchar(15) NOT NULL,
+	vchCodPermisos varchar(8) NOT NULL,
+	vchIdUsuario varchar(8) NOT NULL,
+	vchIdTrabajador varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Contraseña PRIMARY KEY(vchContrasena)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS FechIncidencia(
+	datFechaIncidencia date NOT NULL,
+	vchIdDispositivo varchar(8) NOT NULL,
+	vchIdIncidencia varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Incidencia_Comp PRIMARY KEY(datFechaincIdencia, vchIdDispositivo, vchIdIncidencia)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Incidencias(
+	vchIdIncidencia varchar(8) NOT NULL,
+	vchDescripcion varchar(200) NOT NULL,
+	fltCostes float(6),
+	boolResuelto boolean,
+	
+	CONSTRAINT PK_Incidencia PRIMARY KEY(vchIdIncidencia)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Permisos(
+	vchCodPermisos varchar(8) NOT NULL,
+	vchDescripcion varchar(200) NOT NULL,
+	
+	CONSTRAINT PK_Permisos PRIMARY KEY(vchCodPermisos)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS FechManteni(
+	datFechaManteni date NOT NULL,
+	datFechamantFin date,
+	vchIdincidencia varchar(8) NOT NULL,
+	vchIdTrabajador varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Manteni_Comp PRIMARY KEY(vchIdTrabajador, datFechaManteni, vchIdIncidencia)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS Trabajador(
+	vchTelefono varchar(9),
+	vchNombre varchar(20) NOT NULL,
+	vchApellido varchar(20) NOT NULL,
+	vchIdTrabajador varchar(8) NOT NULL,
+	
+	CONSTRAINT PK_Trabajador PRIMARY KEY(vchIdTrabajador)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS SistOperativo(
+	vchIdSO varchar(8) NOT NULL,
+	vchNombreSO varchar(20) NOT NULL,
+	
+	CONSTRAINT PK_Sist_Operativo PRIMARY KEY(vchIdSO)
+);
+
+
+
+
+ALTER TABLE FechDonacion ADD CONSTRAINT FK_Organizacion_Dona FOREIGN KEY(vchIdorganizacion) REFERENCES Centro_recursos(vchIdorganizacion);
+ALTER TABLE FechDonacion ADD CONSTRAINT FK_Donacion FOREIGN KEY(vchIdDonacion) REFERENCES Donaciones(vchIdDonacion);
+
+ALTER TABLE ReservasLib ADD CONSTRAINT FK_Usuario_Reserv FOREIGN KEY(vchIdUsuario) REFERENCES Usuarios(vchIdUsuario);
+ALTER TABLE ReservasLib ADD CONSTRAINT FK_Libro_Reserv FOREIGN KEY(vchIdLibro) REFERENCES Libros(vchIdLibro);
+
+ALTER TABLE Usuarios ADD CONSTRAINT FK_Localidad FOREIGN KEY(vchIdLocalidad) REFERENCES Localidad(vchIdLocalidad);
+ALTER TABLE Usuarios ADD CONSTRAINT FK_Organizacion FOREIGN KEY(vchIdorganizacion) REFERENCES Centro_recursos(vchIdorganizacion);
+
+ALTER TABLE FechManteni ADD CONSTRAINT FK_Trabajador_Manteni FOREIGN KEY(vchIdTrabajador) REFERENCES Trabajador(vchIdTrabajador);
+ALTER TABLE FechManteni ADD CONSTRAINT FK_Incidencia FOREIGN KEY(vchIdIncidencia) REFERENCES Incidencias(vchIdIncidencia);
+
+ALTER TABLE FechIncidencia ADD CONSTRAINT FK_Incidencia_Fech FOREIGN KEY(vchIdIncidencia) REFERENCES Incidencias(vchIdIncidencia);
+ALTER TABLE FechIncidencia ADD CONSTRAINT FK_Dispositivo_Inci FOREIGN KEY(vchIdDispositivo) REFERENCES Dispositivos(vchIdDispositivo);
+
+ALTER TABLE Contrasenas_permisos ADD CONSTRAINT FK_Trabajador FOREIGN KEY(vchIdTrabajador) REFERENCES Trabajador(vchIdTrabajador);
+ALTER TABLE Contrasenas_permisos ADD CONSTRAINT FK_Permisos_Contra FOREIGN KEY(vchCodPermisos) REFERENCES Permisos(vchCodPermisos);
+ALTER TABLE Contrasenas_permisos ADD CONSTRAINT FK_Id_Usuario FOREIGN KEY(vchIdUsuario) REFERENCES Usuarios(vchIdUsuario);
+
+
+ALTER TABLE Dispositivos ADD CONSTRAINT FK_Sist_Op FOREIGN KEY(vchIdSO) REFERENCES SistOperativo(vchIdSO);
+ALTER TABLE Dispositivos ADD CONSTRAINT FK_Modelo FOREIGN KEY(vchIdModelo) REFERENCES Modelo(vchIdModelo);
+ALTER TABLE Dispositivos ADD CONSTRAINT FK_Marca FOREIGN KEY(vchIdMarca) REFERENCES Marcas(vchIdMarca);
+
+ALTER TABLE CantDisp ADD CONSTRAINT FK_Dispositivo_Cant FOREIGN KEY(vchIdDispositivo) REFERENCES Dispositivos(vchIdDispositivo);
+ALTER TABLE CantDisp ADD CONSTRAINT FK_Espacio FOREIGN KEY(vchIdEspacio) REFERENCES Espacios(vchIdEspacio);
+
+ALTER TABLE CantLibros ADD CONSTRAINT FK_Libro FOREIGN KEY(vchIdLibro) REFERENCES Libros(vchIdLibro);
+ALTER TABLE CantLibros ADD CONSTRAINT FK_Espacio_Lib FOREIGN KEY(vchIdEspacio) REFERENCES Espacios(vchIdEspacio);
+
+ALTER TABLE ReservasDisp ADD CONSTRAINT FK_Usuario FOREIGN KEY(vchIdUsuario) REFERENCES Usuarios(vchIdUsuario);
+ALTER TABLE ReservasDisp ADD CONSTRAINT FK_Dispositivo_Reserv FOREIGN KEY(vchIdDispositivo) REFERENCES Dispositivos(vchIdDispositivo);
+
+ALTER TABLE Espacios ADD CONSTRAINT FK_Organizacion_Espa FOREIGN KEY(vchIdorganizacion) REFERENCES Centro_recursos(vchIdorganizacion);
+
+
+
