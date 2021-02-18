@@ -19,13 +19,17 @@ SELECT * FROM dispositivos d
 	INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
 		GROUP BY d.vchIdDispositivo;
 
--- Podemos hacer la misma consulta pero esta vez con la tabla modelo.
+
+-- Podemos hacer la misma consulta pero esta vez con la tabla modelo, para conocer el modelo de cada uno de 
+-- los dispositivos.
 SELECT * FROM dispositivos d 
     INNER JOIN modelo m ON d.vchIdModelo=m.vchIdModelo
         GROUP BY d.vchIdDispositivo;
 
+
 -- Tambien podemos unir las tres tablas para mostrar los dispositivos junto a su marca y modelo.
 -- En esta consulta también refinaremos nuestro SELECT para no mostrar datos irrelevantes.
+-- Esta consulta nos devolverá el id de todos los dispositivos del centro, junto a su marca y modelo.
 SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo FROM dispositivos d 
     INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
     INNER JOIN modelo mo ON d.vchIdModelo=mo.vchIdModelo
@@ -38,6 +42,7 @@ SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo FROM dispositivos d
 SELECT COUNT(vchTitulo) FROM libros
 	WHERE intEstanteria=3;
 
+
 -- También podemos usar la funcion COUNT() junto a un INNER JOIN para abarcar más tablas.
 -- En este caso usaremos INNER JOIN y COUNT() para mostrar la cantidad de gente que vive de
 --  una localidad en concreto, en este caso Durango.
@@ -45,8 +50,31 @@ SELECT vchlocalidad, COUNT(vchLocalidad) AS 'cantidad de gente de Durango' FROM 
 	INNER JOIN localidad l ON u.vchIdLocalidad=l.vchIdLocalidad
 		WHERE l.vchLocalidad=UPPER('Durango');
 
--- Para contar la cantidad de incidencias que cada dispositivo ha causado podemos usar la siguiente consulta
+
+-- Para mostrar la cantidad de incidencias que cada dispositivo ha causado podemos usar la siguiente consulta.
+-- Nos mostrara el id de cada dispositivo junto a un recuento de cuantas incidencias a tenido.
  SELECT vchIdDispositivo AS Dispositivo, COUNT(vchIdDispositivo) AS 'Numero de incidencias' FROM fechincidencia
  		GROUP BY vchIdDispositivo;
 
--- 
+
+-- Para mostrar las donaciones realizadas en el año de 2020, podemos usar la siguiente consulta. Esta 
+-- consulta nos devolverá la id de la donación junto al nombre del donante, la descripción del material donado,
+-- la cantidad donada y la fecha en la que se realizó la donación.
+SELECT d.vchidDonacion, d.vchnombre, d.vchDescripcion, f.fltCantidad, f.DateFechaDonacion FROM donaciones d
+	INNER JOIN fechdonacion f ON f.vchidDonacion=d.vchidDonacion
+ 		WHERE YEAR(datefechadonacion)=2020;
+
+
+-- Podemos mostrar las reservas de libros realizadas durantes los meses de noviembre y diciembre con la
+-- siguiente consulta. Ademas nos devuelve los datos sobre el libro y la persona que ha realizado la reserva.
+SELECT l.vchIdLibro, vchTitulo, vchAutor, vchEditorial, intEstanteria, intBalda, r.datFechaInicio, u.vchNombre, u.vchApellido  FROM libros l
+	INNER JOIN reservaslib r ON l.vchIdLibro=r.vchIdLibro
+	INNER JOIN usuarios u ON r.vchIdusuario=u.vchIdUsuario
+		WHERE DATE(datFechaInicio) BETWEEN '2020-11-01' AND '2020-12-31';
+
+
+-- Para mostrar que usuarios no han realizado ninguna reserva podemos usar la siguiente consulta. Esta nos
+-- mostrará el id de usuario, nombre y apellido de los usuarios que no han realizado reservas.
+SELECT vchIdUsuario, vchNombre, vchApellido FROM usuarios 
+	WHERE vchIdUsuario NOT IN(
+		SELECT vchIdUsuario FROM reservaslib);
