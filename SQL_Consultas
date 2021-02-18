@@ -36,6 +36,15 @@ SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo FROM dispositivos d
         GROUP BY vchIdDispositivo;
 
 
+-- En esta siguiente consulta haremos lo mismo que arriba, pero uniremos también la tabla de sistema operativo y mostraremos 
+-- el SO de cada dispositivo. Crearemos una vista de esta consulta para así tener información sobre los dispositivos a mano.
+CREATE VIEW vDispositivos AS SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo, s.vchNombreSO FROM dispositivos d 
+    INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
+    INNER JOIN modelo mo ON d.vchIdModelo=mo.vchIdModelo
+    INNER JOIN sistOperativo s ON d.vchIdSO=s.vchIdSO
+        GROUP BY vchIdDispositivo; 
+
+
 
 -- Podemos usar la funcion COUNT() para mostrar el recuento de una tabla en específico. Podemos usarlo para
 -- contar la cantidad de libros que hay en la estanteria 3, por ejemplo.
@@ -78,3 +87,6 @@ SELECT l.vchIdLibro, vchTitulo, vchAutor, vchEditorial, intEstanteria, intBalda,
 SELECT vchIdUsuario, vchNombre, vchApellido FROM usuarios 
 	WHERE vchIdUsuario NOT IN(
 		SELECT vchIdUsuario FROM reservaslib);
+
+
+-- 
