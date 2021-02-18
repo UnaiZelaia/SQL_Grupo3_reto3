@@ -1,0 +1,171 @@
+/************************************************************************************************
+*************************************************************************************************
+
+Dump
+Grupo 3 - Reto 3
+
+
+Autores: Jonatan Villca, David Jiménez, Marcos Seoane y Unai Zelaia-Zugadi
+Módulo: Gestión de bases de datos
+Profesora: Hostaizka Sainz
+Maristak Ikastetxea Durango
+
+
+*********************************************************************************************************************
+*********************************************************************************************************************/
+
+
+
+
+set foreign_key_checks=0;
+INSERT INTO Donaciones values
+('dona0001','Equipo informatico', 'Tesla', 'elonmuske@kekw.com'),
+('dona0002','Cableado', 'Izarak SA', 'izaraksa@gmail.com'),
+('dona0003', 'Dinero', 'Juan Martinez de Irujo', 'IrujoPelota@gmail.com'),
+('dona0004', 'Cemento', 'Lasuen S.L.', 'LasuenAbadiño@lasuen.com'),
+('dona0005', 'Libros', 'Urrike Liburuak', 'UrrikeLiburuak@gmail.com');
+
+INSERT INTO FechDonacion values
+('2020-12-15', 3.000, 'dona0001', 'orga0001'),
+('2020-12-17', 500, 'dona0002', 'orga0002'),
+('2020-11-2', 50000, 'dona0003', 'orga0003'),
+('2021-01-17', 25, 'dona0004', 'orga0004'),
+('2021-02-03', 150, 'dona0005', 'orga0005');
+
+
+INSERT INTO Centro_recursos values
+('Placeholder_Dirección', '946753254', 'orga0000');
+
+
+INSERT INTO ReservasLib values
+('2020-11-23', '2020-11-26', 'user0001', '9788493741372'),
+('2020-10-15', '2020-10-25', 'user0004', '9788420674209'),
+('2020-12-26', '2021-01-7', 'user0001', '9788467006377'),
+('2021-01-5', NULL, 'user0003', '9788433971234'),
+('2021-01-19', NULL, 'user0002', '9788497599245');
+
+
+INSERT INTO Libros values
+('9788493741372','Indigno de ser humano','Osamu Dazai', 1,'Avellano', 4, 2),
+('9788420674209','El guardian entre el centeno','J.D. Salinger', 2,'Dazer',3, 1),
+('9788467006377', 'Guía del Autoestopista Galáctico', 'Douglas Adams', 4, 'Anagrama', 1, 2),
+('9788497599245', 'Fundación', 'Isaac Asimov', 17, 'Debolsillo', 1, 2),
+('9788433971234', 'A Sangre Fría', 'Truman Capote', 6, 'Anagrama', 3, 2);
+
+
+INSERT INTO CantLibros values
+('9788493741372', 'espa0002'),
+('9788420674209', 'espa0002'),
+('9788467006377', 'espa0002'),
+('9788497599245', 'espa0002'),
+('9788433971234', 'espa0002');
+
+INSERT INTO Usuarios values
+('user0001', 'Josu', 'Iglesias', '657828354','loca0001','orga0000'),
+('user0004', 'Rosa', 'Melano', '687364110', 'loca0002','orga0000'),
+('user0002', 'Jonatan', 'Villca', '685412432', 'loca0003', 'orga0000'),
+('user0003', 'Unai', 'Zelaia-Zugadi', '634440950', 'loca0002', 'orga0000'),
+('user0005', 'Marcos', 'Seoane', '635201594', 'loca0002', 'orga0000');
+
+
+INSERT INTO ReservasDisp values
+('2020-11-20', '2020-11-21', 'user0001', 'disp0001'),
+('2020-12-5', '2020-12-5', 'user0004','disp0006'),
+('2020-12-27', '2020-12-27', 'user0001', 'disp0001'),
+('2021-01-14', '2021-01-14', 'user0002', 'disp0004'),
+('2021-02-2', '2021-02-2', 'user0003', 'disp0002');
+
+
+INSERT INTO Espacios values
+('espa0001', 30, 25, 7, 'orga0000'),
+('espa0002', 15, 10, 2, 'orga0000'),
+('espa0003', 50, 40, 1, 'orga0000'),
+('espa0004', 15, 10, 2, 'orga0000'),
+('espa0005', 25, 20, 3, 'orga0000');
+
+
+INSERT INTO CantDisp values
+('disp0001', 'espa0001'),
+('disp0002', 'espa0001'),
+('disp0003', 'espa0001'),
+('disp0004', 'espa0002'),
+('disp0005', 'espa0002'),
+('disp0006', 'espa0002'),
+('disp0007', 'espa0002');
+
+
+INSERT INTO Dispositivos values
+('disp0001', 'mode0001', 'marc0001', 'siop0001'),
+('disp0006', 'mode0002', 'marc0002', 'siop0002'),
+('disp0002', 'mode0002', 'marc0002', 'siop0002'),
+('disp0003', 'mode0002', 'marc0002', 'siop0002'),
+('disp0004', 'mode0002', 'marc0002', 'siop0002'),
+('disp0005', 'mode0003', 'marc0003', 'siop0001'),
+('dsip0007', 'mode0004', 'marc0004', 'siop0001');
+
+
+INSERT INTO Modelo values
+('mode0001','Inspire'),
+('mode0002','ToughBook'),
+('mode0003', 'VivoBook'),
+('mode0004', 'IdeaPad'),
+('mode0005', 'ThinkBook');
+
+INSERT INTO Marcas values
+('marc0001','Acer'),
+('marc0002','Panasonic'),
+('marc0003', 'Asus'),
+('marc0004', 'Lenovo'),
+('marc0005', 'MSI');
+
+INSERT INTO contrasenas_permisos values
+('pass0001','perm0004','user0001', 'trab0001'),
+('pass0002','perm0004','user0002','trab0002'),
+('pass0003', 'perm0001', 'user0003', 'trab0002'),
+('pass0004', 'perm0001', 'user0004', 'trab0002'),
+('pass0005', 'perm0001', 'user0005', 'trab0002');
+
+INSERT INTO FechIncidencia values
+('2020-09-12', 'disp0001', 'inci0001'),
+('2020-07-19', 'disp0006', 'inci0002'),
+('2020-10-03', 'disp0004', 'inci0003'),
+('2020-12-13', 'disp0001', 'inci0004'),
+('2021-2-4', 'disp0002', 'inci0005');
+
+INSERT INTO Incidencias values
+('inci0001', 'Fusible fuente alimentación', 60.50, true),
+('inci0002', 'Teclas rotas', 9.99, true),
+('inci0003', 'Problema pantalla', NULL, false),
+('inci0004', 'Cargador roto', 5, true),
+('inci0005', 'Trackpad roto', 50, true);
+
+
+INSERT INTO Permisos values
+('perm0001','Cliente'),
+('perm0004', 'Administrador');
+
+INSERT INTO FechManteni values
+('2020-09-12','2020-09-14','inci0001','trab0001'),
+('2020-07-19','2020-07-25','inci0002','trab0002'),
+('2020-10-03', NULL, 'inci0003', 'trab0001'),
+('2020-12-13', '2020-12-15', 'inci0004', 'trab0001'),
+('2021-2-4', '2021-2-14', 'inci0005', 'trab0001');
+
+
+INSERT INTO Trabajador values
+('678973932','Alberto','Rojas','trab0001'),
+('645802198','Unai','Zelaia-Zugadi','trab0002');
+
+INSERT INTO SistOperativo values
+('siop0001','Windows10'),
+('siop0002','Ubuntu');
+
+
+INSERT INTO Localidad values
+('loca0001', 'Orore'),
+('loca0002', 'Durango'),
+('loca0003', 'Abadiño'),
+('loca0004', 'Berriz'),
+('loca0005', 'Elorrio');
+
+SET FOREIGN_KEY_CHECKS=1;
