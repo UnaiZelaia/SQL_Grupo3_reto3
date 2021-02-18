@@ -1,0 +1,52 @@
+/********************************************************************************************************************
+*********************************************************************************************************************
+Consultas
+Grupo 3 - Reto 3
+
+
+Autores: Jonatan Villca, David Jiménez, Marcos Seoane y Unai Zelaia-Zugadi
+Módulo: Gestión de bases de datos
+Profesora: Hostaizka Sainz
+Maristak Ikastetxea Durango
+
+
+*********************************************************************************************************************
+*********************************************************************************************************************/
+
+-- Con esta consulta unimos las tablas dispositivos y marcas. Con esta consulta podemos ver de que marca es
+-- cada uno de los dispositivos del centro.
+SELECT * FROM dispositivos d
+	INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
+		GROUP BY d.vchIdDispositivo;
+
+-- Podemos hacer la misma consulta pero esta vez con la tabla modelo.
+SELECT * FROM dispositivos d 
+    INNER JOIN modelo m ON d.vchIdModelo=m.vchIdModelo
+        GROUP BY d.vchIdDispositivo;
+
+-- Tambien podemos unir las tres tablas para mostrar los dispositivos junto a su marca y modelo.
+-- En esta consulta también refinaremos nuestro SELECT para no mostrar datos irrelevantes.
+SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo FROM dispositivos d 
+    INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
+    INNER JOIN modelo mo ON d.vchIdModelo=mo.vchIdModelo
+        GROUP BY vchIdDispositivo;
+
+
+
+-- Podemos usar la funcion COUNT() para mostrar el recuento de una tabla en específico. Podemos usarlo para
+-- contar la cantidad de libros que hay en la estanteria 3, por ejemplo.
+SELECT COUNT(vchTitulo) FROM libros
+	WHERE intEstanteria=3;
+
+-- También podemos usar la funcion COUNT() junto a un INNER JOIN para abarcar más tablas.
+-- En este caso usaremos INNER JOIN y COUNT() para mostrar la cantidad de gente que vive de
+--  una localidad en concreto, en este caso Durango.
+SELECT vchlocalidad, COUNT(vchLocalidad) AS 'cantidad de gente de Durango' FROM usuarios u
+	INNER JOIN localidad l ON u.vchIdLocalidad=l.vchIdLocalidad
+		WHERE l.vchLocalidad=UPPER('Durango');
+
+-- Para contar la cantidad de incidencias que cada dispositivo ha causado podemos usar la siguiente consulta
+ SELECT vchIdDispositivo AS Dispositivo, COUNT(vchIdDispositivo) AS 'Numero de incidencias' FROM fechincidencia
+ 		GROUP BY vchIdDispositivo;
+
+-- 
