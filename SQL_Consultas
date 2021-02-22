@@ -57,7 +57,7 @@ SELECT COUNT(vchTitulo) FROM libros
 --  una localidad en concreto, en este caso Durango.
 SELECT vchlocalidad, COUNT(vchLocalidad) AS 'cantidad de gente de Durango' FROM usuarios u
 	INNER JOIN localidad l ON u.vchIdLocalidad=l.vchIdLocalidad
-		WHERE l.vchLocalidad=UPPER('Durango');
+		WHERE UPPER(l.vchLocalidad)=UPPER('Durango');
 
 
 -- Para mostrar la cantidad de incidencias que cada dispositivo ha causado podemos usar la siguiente consulta.
@@ -72,7 +72,7 @@ SELECT vchlocalidad, COUNT(vchLocalidad) AS 'cantidad de gente de Durango' FROM 
 SELECT d.vchidDonacion, d.vchnombre, d.vchDescripcion, f.fltCantidad, f.DateFechaDonacion FROM donaciones d
 	INNER JOIN fechdonacion f ON f.vchidDonacion=d.vchidDonacion
  		WHERE YEAR(datefechadonacion)=2020;
-
+-- Podemos modificar el año dentro de la clausula WHERE para poner el año que queramos.
 
 -- Podemos mostrar las reservas de libros realizadas durantes los meses de noviembre y diciembre con la
 -- siguiente consulta. Ademas nos devuelve los datos sobre el libro y la persona que ha realizado la reserva.
@@ -80,6 +80,7 @@ SELECT l.vchIdLibro, vchTitulo, vchAutor, vchEditorial, intEstanteria, intBalda,
 	INNER JOIN reservaslib r ON l.vchIdLibro=r.vchIdLibro
 	INNER JOIN usuarios u ON r.vchIdusuario=u.vchIdUsuario
 		WHERE DATE(datFechaInicio) BETWEEN '2020-11-01' AND '2020-12-31';
+-- Las fechas de esta consulta son modificables por lo que podemos introducir el intervalo de fechas que deseemos.
 
 
 -- Para mostrar que usuarios no han realizado ninguna reserva podemos usar la siguiente consulta. Esta nos
@@ -89,4 +90,16 @@ SELECT vchIdUsuario, vchNombre, vchApellido FROM usuarios
 		SELECT vchIdUsuario FROM reservaslib);
 
 
--- 
+-- Podemos usar una consulta similar para mostrar los libros que no han sido
+-- reservados en ningún momento.
+SELECT * FROM Libros
+	WHERE vchIdLibro NOT IN(
+		SELECT vchIdLibro FROM reservaslib);
+
+
+-- Para consultar cuantos de nuestros dispositivos totales están en condiciones
+-- de ser utilizados (incidencia resuelta), podemos usar la siguiente consulta.
+SELECT COUNT(d.vchIdDispositivo) AS TotalDispositivos, COUNT(CASE WHEN i.boolResuelto=1 THEN 1 ELSE NULL END) AS TotalFuncionando FROM dispositivos d
+	INNER JOIN fechincidencia f ON d.vchIdDispositivo=f.vchIdDispositivo
+    INNER JOIN incidencias i ON f.vchIdIncidencia=i.vchIdIncidencia;
+
