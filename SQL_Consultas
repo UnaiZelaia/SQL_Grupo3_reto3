@@ -103,3 +103,9 @@ SELECT COUNT(d.vchIdDispositivo) AS TotalDispositivos, COUNT(CASE WHEN i.boolRes
 	INNER JOIN fechincidencia f ON d.vchIdDispositivo=f.vchIdDispositivo
     INNER JOIN incidencias i ON f.vchIdIncidencia=i.vchIdIncidencia;
 
+
+-- Con esta siguiente consulta podemos agrupar las donaciones realizadas por el trimestre del
+-- año en el que han sido realizadas. También ordena las donaciones de más antiguas a más nuevas.
+SELECT d.vchidDonacion, d.vchDescripcion, d.vchNombre, d.vchEmail,YEAR(f.datefechadonacion) AS Año, QUARTER(f.DateFechaDonacion) AS Trimestre FROM donaciones d
+	INNER JOIN fechdonacion f ON d.vchidDonacion=f.vchidDonacion
+		ORDER BY f.DateFechaDonacion ASC;
