@@ -15,40 +15,45 @@ Maristak Ikastetxea Durango
 
 -- Con esta consulta unimos las tablas dispositivos y marcas. Con esta consulta podemos ver de que marca es
 -- cada uno de los dispositivos del centro.
-SELECT * FROM dispositivos d
-	INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
-		GROUP BY d.vchIdDispositivo;
+SELECT intIdDispositivo, intIdModelo, d.IntIdMarca, intIdSO, vchMarca FROM dispositivos d
+	INNER JOIN marcas m ON d.intIdMarca=m.intIdMarca
+		GROUP BY d.intIdDispositivo;
 
 
 -- Podemos hacer la misma consulta pero esta vez con la tabla modelo, para conocer el modelo de cada uno de 
 -- los dispositivos.
-SELECT * FROM dispositivos d 
-    INNER JOIN modelo m ON d.vchIdModelo=m.vchIdModelo
-        GROUP BY d.vchIdDispositivo;
+SELECT intIdDispositivo, d.intIdModelo, d.IntIdMarca, intIdSO, vchModelo FROM dispositivos d 
+    INNER JOIN modelo m ON d.intIdModelo=m.intIdModelo
+        GROUP BY d.intIdDispositivo;
 
 
 -- Tambien podemos unir las tres tablas para mostrar los dispositivos junto a su marca y modelo.
 -- En esta consulta también refinaremos nuestro SELECT para no mostrar datos irrelevantes.
 -- Esta consulta nos devolverá el id de todos los dispositivos del centro, junto a su marca y modelo.
-SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo FROM dispositivos d 
-    INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
-    INNER JOIN modelo mo ON d.vchIdModelo=mo.vchIdModelo
-        GROUP BY vchIdDispositivo;
+SELECT d.intIdDispositivo, m.vchMarca, mo.vchModelo FROM dispositivos d 
+    INNER JOIN marcas m ON d.intIdMarca=m.intIdMarca
+    INNER JOIN modelo mo ON d.intIdModelo=mo.intIdModelo
+        GROUP BY intIdDispositivo;
 
 
+
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- En esta siguiente consulta haremos lo mismo que arriba, pero uniremos también la tabla de sistema operativo y mostraremos 
 -- el SO de cada dispositivo. Crearemos una vista de esta consulta para así tener información sobre los dispositivos a mano.
-CREATE VIEW vDispositivos AS SELECT d.vchIdDispositivo, m.vchMarca, mo.vchModelo, s.vchNombreSO FROM dispositivos d 
-    INNER JOIN marcas m ON d.vchIdMarca=m.vchIdMarca
-    INNER JOIN modelo mo ON d.vchIdModelo=mo.vchIdModelo
-    INNER JOIN sistOperativo s ON d.vchIdSO=s.vchIdSO
-        GROUP BY vchIdDispositivo; 
+CREATE VIEW vDispositivos AS SELECT d.intIdDispositivo, m.vchMarca, mo.vchModelo, s.vchNombreSO FROM dispositivos d 
+    INNER JOIN marcas m ON d.intIdMarca=m.intIdMarca
+    INNER JOIN modelo mo ON d.intIdModelo=mo.intIdModelo
+    INNER JOIN sistOperativo s ON d.intIdSO=s.intIdSO
+        GROUP BY intIdDispositivo; 
 
 
 
 -- Podemos usar la funcion COUNT() para mostrar el recuento de una tabla en específico. Podemos usarlo para
 -- contar la cantidad de libros que hay en la estanteria 3, por ejemplo.
-SELECT COUNT(vchTitulo) FROM libros
+SELECT COUNT(vchTitulo) AS "libros en estanteria 3" FROM libros
 	WHERE intEstanteria=3;
 
 
@@ -56,40 +61,59 @@ SELECT COUNT(vchTitulo) FROM libros
 -- En este caso usaremos INNER JOIN y COUNT() para mostrar la cantidad de gente que vive de
 --  una localidad en concreto, en este caso Durango.
 SELECT vchlocalidad, COUNT(vchLocalidad) AS 'cantidad de gente de Durango' FROM usuarios u
-	INNER JOIN localidad l ON u.vchIdLocalidad=l.vchIdLocalidad
+	INNER JOIN localidad l ON u.intIdLocalidad=l.intIdLocalidad
 		WHERE UPPER(l.vchLocalidad)=UPPER('Durango');
 
 
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Para mostrar la cantidad de incidencias que cada dispositivo ha causado podemos usar la siguiente consulta.
 -- Nos mostrara el id de cada dispositivo junto a un recuento de cuantas incidencias a tenido.
- SELECT vchIdDispositivo AS Dispositivo, COUNT(vchIdDispositivo) AS 'Numero de incidencias' FROM fechincidencia
- 		GROUP BY vchIdDispositivo;
+ SELECT intIdDispositivo AS Dispositivo, COUNT(intIdDispositivo) AS 'Numero de incidencias' FROM fechincidencia
+ 		GROUP BY intIdDispositivo;
 
 
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Para mostrar las donaciones realizadas en el año de 2020, podemos usar la siguiente consulta. Esta 
 -- consulta nos devolverá la id de la donación junto al nombre del donante, la descripción del material donado,
 -- la cantidad donada y la fecha en la que se realizó la donación.
-SELECT d.vchidDonacion, d.vchnombre, d.vchDescripcion, f.fltCantidad, f.DateFechaDonacion FROM donaciones d
-	INNER JOIN fechdonacion f ON f.vchidDonacion=d.vchidDonacion
+SELECT d.intidDonacion, d.vchnombre, d.vchDescripcion, f.fltCantidad, f.DateFechaDonacion FROM donaciones d
+	INNER JOIN fechdonacion f ON f.intidDonacion=d.intidDonacion
  		WHERE YEAR(datefechadonacion)=2020;
 -- Podemos modificar el año dentro de la clausula WHERE para poner el año que queramos.
 
+
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Podemos mostrar las reservas de libros realizadas durantes los meses de noviembre y diciembre con la
 -- siguiente consulta. Ademas nos devuelve los datos sobre el libro y la persona que ha realizado la reserva.
 SELECT l.vchIdLibro, vchTitulo, vchAutor, vchEditorial, intEstanteria, intBalda, r.datFechaInicio, u.vchNombre, u.vchApellido  FROM libros l
 	INNER JOIN reservaslib r ON l.vchIdLibro=r.vchIdLibro
-	INNER JOIN usuarios u ON r.vchIdusuario=u.vchIdUsuario
+	INNER JOIN usuarios u ON r.intIdusuario=u.intIdUsuario
 		WHERE DATE(datFechaInicio) BETWEEN '2020-11-01' AND '2020-12-31';
 -- Las fechas de esta consulta son modificables por lo que podemos introducir el intervalo de fechas que deseemos.
 
 
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Para mostrar que usuarios no han realizado ninguna reserva podemos usar la siguiente consulta. Esta nos
 -- mostrará el id de usuario, nombre y apellido de los usuarios que no han realizado reservas.
-SELECT vchIdUsuario, vchNombre, vchApellido FROM usuarios 
-	WHERE vchIdUsuario NOT IN(
-		SELECT vchIdUsuario FROM reservaslib);
+SELECT intIdUsuario, vchNombre, vchApellido FROM usuarios 
+	WHERE intIdUsuario NOT IN(
+		SELECT intIdUsuario FROM reservaslib);
 
 
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Podemos usar una consulta similar para mostrar los libros que no han sido
 -- reservados en ningún momento.
 SELECT * FROM Libros
@@ -97,15 +121,229 @@ SELECT * FROM Libros
 		SELECT vchIdLibro FROM reservaslib);
 
 
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Para consultar cuantos de nuestros dispositivos totales están en condiciones
 -- de ser utilizados (incidencia resuelta), podemos usar la siguiente consulta.
-SELECT COUNT(d.vchIdDispositivo) AS TotalDispositivos, COUNT(CASE WHEN i.boolResuelto=1 THEN 1 ELSE NULL END) AS TotalFuncionando FROM dispositivos d
-	INNER JOIN fechincidencia f ON d.vchIdDispositivo=f.vchIdDispositivo
-    INNER JOIN incidencias i ON f.vchIdIncidencia=i.vchIdIncidencia;
+SELECT COUNT(d.intIdDispositivo) AS TotalDispositivos, COUNT(CASE WHEN i.boolResuelto=1 THEN 1 ELSE NULL END) AS TotalFuncionando FROM dispositivos d
+	INNER JOIN fechincidencia f ON d.intIdDispositivo=f.intIdDispositivo
+    INNER JOIN incidencias i ON f.intIdDispositivo=i.intIdIncidencia;
 
 
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
 -- Con esta siguiente consulta podemos agrupar las donaciones realizadas por el trimestre del
 -- año en el que han sido realizadas. También ordena las donaciones de más antiguas a más nuevas.
-SELECT d.vchidDonacion, d.vchDescripcion, d.vchNombre, d.vchEmail,YEAR(f.datefechadonacion) AS Año, QUARTER(f.DateFechaDonacion) AS Trimestre FROM donaciones d
-	INNER JOIN fechdonacion f ON d.vchidDonacion=f.vchidDonacion
+SELECT d.intIdDonacion, d.vchDescripcion, d.vchNombre, d.vchEmail,YEAR(f.datefechadonacion) AS Año, QUARTER(f.DateFechaDonacion) AS Trimestre FROM donaciones d
+	INNER JOIN fechdonacion f ON d.intIdDonacion=f.intIdDonacion
 		ORDER BY f.DateFechaDonacion ASC;
+
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
+-- procedimiento para ver el sistema operativo de un dispositivo. Acepta de parametro de entrada la id de un dispositivo (Ej: 'disp0001') y de 
+-- parametro de salida nos muestra un mensaje con el sistema operativo que tiene el dispositivo seleccionado.
+DELIMITER $$
+CREATE PROCEDURE SODispositivo(InIdDisp int)
+BEGIN
+SELECT vchMarca, vchModelo, vchNombreSO FROM dispositivos d
+	INNER JOIN Modelo m ON d.intIdModelo=m.intIdModelo
+    INNER JOIN Marcas ma ON d.intIdMarca=ma.IntIdMarca
+    INNER JOIN sistOperativo s ON d.intIdSO=s.intIdSO
+		WHERE InIdDisp=d.intIdDispositivo;
+
+END; $$
+DELIMITER ;
+
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
+
+-- Procedimiento para añadir a incidencias un dispositivo ya existente.
+Delimiter $$
+CREATE PROCEDURE crearIncidencia(inDescripción varchar(200), inCostes float,inIdDispositivo int, OUT mensaje varchar(100))
+BEGIN
+-- Declarar variables locales necesarias
+DECLARE Resuelto bool;
+DECLARE newIdIncidencia int;
+DECLARE fecha DATE;
+
+
+-- La incidencia está sin resolver cuando se genera.
+SET Resuelto=false;
+
+-- Crear nuevo id para la nueva incidencia
+SELECT MAX(intIdIncidencia) INTO newIdIncidencia FROM incidencias;
+SET newIdIncidencia = newIdIncidencia+1;
+
+-- Generar fecha actual, castearla a tipo date y meterla en la variable fecha.
+SELECT CAST(GETDATE()AS DATE) INTO fecha;
+
+-- Inserts para la nueva incidencia si el dispositivo está en la base de datos.
+IF inIdDispositivo IN (SELECT intIdDispositivo FROM dispositivos) THEN 
+	SET FOREIGN_KEY_CHECKS=0;
+	INSERT INTO incidencias VALUES
+	(newIdIncidencia, inDescripcion, inCostes, Resuelto);
+
+	INSERT INTO fechIncidencia VALUES
+	(fecha, InIdDispositivo, newIdIncidencia);
+    SET FOREIGN_KEY_CHECKS=1;
+ELSE
+-- Si el dispositivo no existe, hay un error.
+	SET mensaje="El dispositivo no existe en la base de datos";
+END IF;
+
+END; $$
+DELIMITER ;
+
+
+
+
+
+
+
+
+-- Devolver los datos de un usuario si el 
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
+-- Procedimiento para añadir un usuario a la base de datos. 
+DELIMITER $$
+CREATE PROCEDURE AddUser(IN inNombre varchar(20), IN inApellido varchar(20),
+ IN inTlf varchar(9),IN inLocalidad varchar(20), IN inContraseña varchar(15))
+BEGIN
+
+DECLARE mensajeError varchar(50);
+DECLARE newIdUsuario varchar(8);
+DECLARE newIdLocalidad varchar(8);
+DECLARE ConcatUsuario varchar(8);
+DECLARE ConcatLocalidad varchar(8);
+DECLARE ConvertUsuario  int(8);
+DECLARE Convertlocalidad int(8);
+
+-- Esta operación divide el id en dos(parte varchar y parte int), despues aumenta el valor de la parte numérica y vuelve
+-- a unirlos de nuevo.
+SELECT MAX(vchIdUsuario) INTO newIdUsuario FROM usuarios;
+SELECT SUBSTRING(newIdUsuario, 1, 4) INTO ConcatUsuario;
+SET ConvertUsuario=CAST(SUBSTRING(newIdUsuario, 5, 4)AS unsigned);
+SET ConvertUsuario=ConvertUsuario+ 1;
+SET newIdUsuario=CONCAT(ConcatUsuario+ConvertUsuario);
+
+
+-- Lo mismo con la id de localidad. El IF es para comprobar si ya está la localidad en la base de datos. Si se encuentra, la id se pone
+-- en el mismo valor que la localidad introducida.
+IF newIdLocalidad NOT IN(SELECT vchLocalidad FROM localidad) THEN
+	SELECT MAX(vchIdLocalidad) INTO newIdLocalidad FROM localidad;
+	SELECT
+    SELECT
+CASE
+        WHEN LOCATE('1',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '1', 1)
+        WHEN LOCATE('2',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '2', 1)
+		WHEN LOCATE('3',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '3', 1)
+		WHEN LOCATE('4',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '4', 1)
+		WHEN LOCATE('5',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '5', 1)
+		WHEN LOCATE('6',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '6', 1)
+		WHEN LOCATE('7',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '7', 1)
+		WHEN LOCATE('8',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '8', 1)
+		WHEN LOCATE('9',newIdLocalidad ) THEN SUBSTRING_INDEX(newIdLocalidad, '9', 1)
+	
+        ELSE newIdLocalidad
+	END AS ConcatUsuario;
+	SELECT SUBSTRING(newIdLocalidad, 1, 4) INTO ConcatLocalidad; -- Meter index_of 0 para separar al primer 0.
+	SET ConvertLocalidad=CAST(SUBSTRING(newIdLocalidad, 5, 4)AS UNSIGNED);
+	SET ConvertLocalidad=ConvertLocalidad+ 1;
+	SET newIdLocalidad=CONCAT(ConcatLocalidad+ConvertLocalidad);
+    
+ELSE 
+	SET newIdLocalidad=(SELECT vchIdLocalidad FROM localidad WHERE inLocalidad=vchLocalidad);
+END IF;
+
+
+-- Comprobación de errores en los IN.
+IF inContraseña LIKE('%[-!#%&+,./:;<=>@`{|}~"()*\\\_\^\?\[\]\']%') THEN
+	SET mensajeError = 'Tu contraseña contiene un carácter no admitido';
+ELSEIF inNombre LIKE('%[-!#%&+,./:;<=>@`{|}~"()*\\\_\^\?\[\]\']%') THEN
+	SET mensajeError = 'Tu nombre de usuario contiene un carácter no admitido';
+ELSEIF inApellido LIKE('%[-!#%&+,./:;<=>@`{|}~"()*\\\_\^\?\[\]\']%') THEN
+	SET mensajeError = 'Tu apellido contiene un carácter no admitido';
+ELSEIF inTLF NOT LIKE('%[0-9]%') THEN 
+	SET mensajeError = 'Introduzca un número de teléfono válido';
+ELSEIF inLocalidad LIKE('%[-!#%&+,./:;<=>@`{|}~"()*\\\_\^\?\[\]\']%') THEN
+	SET mensajeError = 'Tu localidad contiene un carácter no admitido';
+
+-- Si no hay fallos en los parámetros se insertan los valores a las tablas
+ELSE
+	INSERT INTO usuarios VALUES
+    (newIdUsuario, inNombre, inApellido, inTlf, newIdLocalidad, 'orga0001');
+    
+    INSERT INTO contrasenas_permisos VALUES
+    (inContraseña, 'perm0001', newIdUsuario,'trab0002');
+IF inLocalidad NOT IN(SELECT vchLocalidad FROM Localidad WHERE vchLocalidad=inLocalidad) then
+    INSERT INTO localidad VALUES
+    (newIdLocalidad, inLocalidad);
+ELSE 
+	SET newIdLocalidad=newIdLocalidad;
+END IF;
+END IF;
+
+END IF;
+END; $$
+DELIMITER ;
+
+
+
+
+/*************************************************************************************************************************
+*************************************************************************************************************************/
+-- version 2
+
+DELIMITER $$
+CREATE PROCEDURE AddUser(IN inNombre varchar(20), IN inApellido varchar(20),
+ IN inTlf varchar(9),IN inLocalidad varchar(20), IN inContraseña varchar(15))
+BEGIN
+-- Declaracion de variables necesarias
+DECLARE mensajeError varchar(50);
+DECLARE newIdUsuario varchar(8);
+DECLARE newIdLocalidad varchar(8);
+
+-- Crear un nuevo id de usuario para el nuevo usuario que se va a crear. se selecciona el id con el valor más alto
+-- de la tabla y se le suma 1.
+SELECT MAX(intIdUsuario) INTO newIdUsuario FROM usuarios;
+SET newIdUsuario = newIdUsuario + 1;
+
+
+-- Misma operación para el id de 
+SELECT MAX(intIdLocalidad) INTO newIdLocalidad FROM localidad;
+IF newIdLocalidad NOT IN(SELECT vchLocalidad FROM localidad) THEN
+	SET newIdLocalidad = newIdLocalidad + 1;
+
+-- Si la localidad ya existe, la variable newIdLocalidad toma el valor de la localidad que hemos introducido
+ELSE 
+	SET newIdLocalidad=(SELECT intIdLocalidad FROM localidad WHERE UPPER(inLocalidad)=UPPER(vchLocalidad));
+END IF;
+
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- Insertar los datos que hemos procesado a las tablas de la base de datos
+	INSERT INTO usuarios VALUES
+    (newIdUsuario, inNombre, inApellido, inTlf, newIdLocalidad, '1');
+
+    INSERT INTO contrasenas_permisos VALUES
+    (inContraseña, 'perm0001', newIdUsuario,'2');
+	
+    
+IF UPPER(inLocalidad) NOT IN(SELECT UPPER(vchLocalidad) FROM Localidad) then
+    INSERT INTO localidad VALUES
+    (newIdLocalidad, inLocalidad);
+ELSE 
+	SET newIdLocalidad=newIdLocalidad;
+END IF;
+SET FOREIGN_KEY_CHECKS=1;
+END; $$
+DELIMITER ;
